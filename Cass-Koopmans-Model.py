@@ -4,7 +4,7 @@ plt.rcParams["figure.figsize"] = (11, 5)  #set default figure size
 from numba import njit, float64
 from numba.experimental import jitclass
 import numpy as np
-In [23]:
+
 planning_data = [
     ('γ', float64),    # Coefficient of relative risk aversion
     ('β', float64),    # Discount factor
@@ -12,7 +12,7 @@ planning_data = [
     ('α', float64),    # Return to capital per capita
     ('A', float64)     # Technology
 ]
-In [3]:
+
 @jitclass(planning_data)
 class PlanningProblem():
 
@@ -76,9 +76,9 @@ class PlanningProblem():
         c_next = u_prime_inv(u_prime(c) / (β * (f_prime(k_next) + (1 - δ))))
 
         return k_next, c_next
-In [5]:
+
 pp = PlanningProblem()
-In [6]:
+
 @njit
 def shooting(pp, c0, k0, T=10):
     '''
@@ -104,9 +104,9 @@ def shooting(pp, c0, k0, T=10):
     k_vec[T+1] = pp.f(k_vec[T]) + (1 - pp.δ) * k_vec[T] - c_vec[T]
 
     return c_vec, k_vec
-In [7]:
+
 paths = shooting(pp, 0.2, 0.3, T=10)
-In [8]:
+
 fig, axs = plt.subplots(1, 2, figsize=(14, 5))
 
 colors = ['blue', 'red']
@@ -123,7 +123,7 @@ axs[1].axvline(T+1, color='k', ls='--', lw=1)
 
 plt.show()
 
-In [9]:
+
 @njit
 def bisection(pp, c0, k0, T=10, tol=1e-4, max_iter=500, k_ter=0, verbose=True):
 
@@ -155,7 +155,7 @@ def bisection(pp, c0, k0, T=10, tol=1e-4, max_iter=500, k_ter=0, verbose=True):
             c0_upper = c0
 
         c0 = (c0_lower + c0_upper) / 2
-In [10]:
+
 def plot_paths(pp, c0, k0, T_arr, k_ter=0, k_ss=None, axs=None):
 
     if axs is None:
@@ -185,35 +185,35 @@ def plot_paths(pp, c0, k0, T_arr, k_ter=0, k_ss=None, axs=None):
         axs[1].scatter(T+1, paths[1][-1], s=80)
 
     return c_paths, k_paths
-In [11]:
+
 plot_paths(pp, 0.3, 0.3, [10]);
 
-In [12]:
+
 ρ = 1 / pp.β - 1
 k_ss = pp.f_prime_inv(ρ+pp.δ)
 
 print(f'steady state for capital is: {k_ss}')
 steady state for capital is: 9.57583816331462
-In [13]:
+
 plot_paths(pp, 0.3, k_ss, [150], k_ss=k_ss);
 
-In [14]:
+
 plot_paths(pp, 0.3, k_ss/3, [150], k_ss=k_ss);
 
-In [15]:
+
 plot_paths(pp, 0.3, k_ss/3, [150, 75, 50, 25], k_ss=k_ss);
 
-In [16]:
+
 plot_paths(pp, 0.3, k_ss/3, [250, 150, 50, 25], k_ss=k_ss);
 
-In [17]:
+
 @njit
 def saving_rate(pp, c_path, k_path):
     'Given paths of c and k, computes the path of saving rate.'
     production = pp.f(k_path[:-1])
 
     return (production - c_path) / production
-In [20]:
+
 def plot_saving_rate(pp, c0, k0, T_arr, k_ter=0, k_ss=None, s_ss=None):
 
     fix, axs = plt.subplots(2, 2, figsize=(12, 9))
@@ -228,7 +228,7 @@ def plot_saving_rate(pp, c0, k0, T_arr, k_ter=0, k_ss=None, s_ss=None):
 
     if s_ss is not None:
         axs[1, 1].hlines(s_ss, 0, np.max(T_arr), linestyle='--')
-In [21]:
+
 plot_saving_rate(pp, 0.3, k_ss/3, [250, 150, 75, 50], k_ss=k_ss)
 
 In [22]:
