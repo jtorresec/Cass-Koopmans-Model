@@ -231,11 +231,11 @@ def plot_saving_rate(pp, c0, k0, T_arr, k_ter=0, k_ss=None, s_ss=None):
 
 plot_saving_rate(pp, 0.3, k_ss/3, [250, 150, 75, 50], k_ss=k_ss)
 
-In [22]:
+
 # steady state of saving rate
 s_ss = pp.δ * k_ss / pp.f(k_ss)
 
 plot_saving_rate(pp, 0.3, k_ss/3, [130], k_ter=k_ss, k_ss=k_ss, s_ss=s_ss)
 
-In [ ]:
+#Fonte: https://python.quantecon.org/cass_koopmans_1.html
  
